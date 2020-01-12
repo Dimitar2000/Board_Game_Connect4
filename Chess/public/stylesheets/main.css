@@ -1,0 +1,23 @@
+body {
+	display: inline-flex;;
+}
+
+body div.side {
+	width: 400px;
+}
+
+body div.center {
+	width: 800px;
+}
+
+td.figure {
+	background-size: 100% 100%;
+	
+	cursor: pointer;
+	
+}
+td.identifier {
+	background-size: 100% 100%;
+	text-align: center;
+	font-size: 100%;
+}

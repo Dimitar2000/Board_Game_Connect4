@@ -1,0 +1,105 @@
+html ,body  {
+	height: 100%;
+	width: 100%;
+}
+
+ html {
+
+	background-image: url("../images/chess_background.jfif");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	overflow: hidden;
+}
+
+header {
+
+	display: inline-flex;
+	width: 100%;
+	height: 25%;
+
+
+}
+
+header div {
+	width: 20%;
+}
+
+header h1 {
+	width: 60%;
+	text-align: center;
+	box-sizing: border-box;
+	font-size: 600%;
+	margin-top: 4%;
+}
+
+main {
+	margin-top: 2%;
+	height: 20%;
+	text-align: center;
+}
+
+main button {
+	height: 70%;
+	width: 40%;
+	font-size: 195%;
+}
+
+main button:hover {
+	text-decoration: underline;
+	
+}
+
+footer {
+	height: 50%;
+	display: flex;
+	border-top: 2px black;
+	border-bottom: 2px black;
+	border-top-style: dashed;
+	border-bottom-style: dashed;
+
+}
+
+footer div.Statistics {
+
+	border-right: 2px black;
+	border-right-style: dashed;
+	width: 50%;
+	height: 100%;
+}
+
+p.Stats_Header, p.Info_Header {
+	height: 10%;
+	text-align: center;
+	font-size: 200%;
+	border-bottom: 1px solid black;
+}
+
+.Statistics .stats li {
+	font-size: 150%;
+	margin-top: 10%;
+}
+
+li p {
+	display: inline-block;
+}
+
+
+footer div.Information {
+	width: 50%;
+	height: 100%;
+}
+
+div.info {
+	height: 90%;
+	overflow-y: scroll;
+	scroll-behavior: smooth;
+	text-indent: 5%;
+}
+
+ div.info p {
+	font-size: 150%;
+}
+
+strong {
+	color: red;
+}
