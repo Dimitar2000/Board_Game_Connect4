@@ -1,8 +1,45 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  text-align: center;
 }
 
-a {
-  color: #00B7FF;
+#connect4 {
+  background-color: yellow;
+  display: inline-block;
+}
+
+.col {
+  width: 70px;
+  height: 70px;
+  display: inline-block;
+  background-color: white;
+  border-radius: 50%;
+  margin: 5px;
+}
+
+.next-red {
+  background-color: brown;
+}
+
+.own {
+  background-color: blue;
+}
+
+.enemy {
+  background-color: green;
+}
+
+.animated {
+    animation-name: movecell;
+    animation-duration: 1s;
+}
+
+@keyframes movecell {
+    from {
+        position: relative;
+        bottom: 500px;
+    }
+    to {
+        position: relative;
+        bottom: 0px;
+    }
 }
