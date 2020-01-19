@@ -1,16 +1,18 @@
 var main = function() {
 
-
-   // var client = new WebSocket("ws://localhost:3000");  // We create a new WebSocket object that instantly connects to the server
-    
     var connected = false;
-    var url = "http://localhost:8000/game";
+    var url = "http://192.168.1.22:8000/game";
     var playerName;
 
-    var stats = document.querySelectorAll("li p");   // We create an array to hold the places where our statistics are located on the page   
+    var stats = document.querySelectorAll("li p");     
     var button = $("button");
     var inputName = $("input[type=text]");
     var submit = $("input[type=submit]");
+    
+
+    $.get("/statistics" , function success(data) {
+        $(".Statistics").append(data);
+    });
 
     submit.on("click", emptyInput);
 
@@ -20,26 +22,19 @@ var main = function() {
         if(connected === false) {
 
             connected = true;
-            displayWaiting(this);
-
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: player
-            })
-
-            setTimeout(function () {
                 // Send a GET request for game.html
-                window.location.href = url;
-            }, 2000);
-            
-        }
+                document.location.href = url;
 
+            }
     });
 
     function emptyInput() {
+
+        $("button").addClass("transit").text("Play The Game");
+
         playerName = inputName.val();
         // Use browser cookies to save the name and later use it by game.html
+        document.cookie = playerName;
         inputName.attr("disabled", "disabled");
         inputName.val("");
         console.log(playerName + " " + submit);

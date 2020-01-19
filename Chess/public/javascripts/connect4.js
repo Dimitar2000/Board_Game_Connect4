@@ -2,20 +2,30 @@
 
 class Connect4 {
 
-    constructor(selector , wss) {
+    constructor(selector) {
+
         this.ROWS = 6;
         this.COLS = 7;
         this.selector = selector;
         this.createGrid();
         this.setupEventListeners();
-       /* this.myMove = true; */
-        this.movedCell = undefined;
 
+        this.myMove = undefined;
+        this.id = undefined;
+        this.game_id = undefined;
+        this.player2Name = undefined; 
+        
     }
 
     addSocket(wss) {
         this.wss = wss;
+        console.log(wss);
     }
+
+    displayWaitingMove() {
+        $("div#Messages p").text((this.myMove) ? "Its your move" : `Its ${this.player2Name}'s turn`);
+    }
+
     // A function to create the table for Connect4
     // 6 × 7  div elements
     // Every div has attributes "data-col" and "data-row" that show its location on the grid
@@ -40,7 +50,7 @@ class Connect4 {
         }
     }
 
-    
+
     // Ataches event listeners to all cells
     // for hovering and clicking on them
     // This should work only when its this player's move
@@ -59,14 +69,13 @@ class Connect4 {
         }
 
         $board.on("mouseenter", '.col.empty', function () {
-/*             if (!that.myMove) return; 
-*/          const col = $(this).data('col');
+            if (!that.myMove || that.id === undefined) return;
+            const col = $(this).data('col');
             const $lastEmptyCell = findLastEmptyCell(col);
             if ($lastEmptyCell) {
                 $lastEmptyCell.addClass('next-red');
 
             }
-
         });
 
         $board.on("mouseleave", '.col', function () {
@@ -74,20 +83,17 @@ class Connect4 {
         });
 
         $board.on("click", '.col.empty', function () {
-
             
+            if (!that.myMove || that.id === undefined) return;
             
-/*            if (!that.myMove) return;
-*/
-            
-
+            document.querySelector("audio#move").play();
             that.myMove = false;
             const col = $(this).data('col');
 
             const $lastEmptyCell = findLastEmptyCell(col);
-            
+
             if ($lastEmptyCell) {
-                
+
                 $lastEmptyCell.addClass("own");
                 $lastEmptyCell.removeClass('empty');
                 $('.col').removeClass('next-red');
@@ -97,33 +103,56 @@ class Connect4 {
                 setTimeout(function () {
                     $lastEmptyCell.toggleClass("animated");
                 }, 1000);
+
                 var victory = that.checkVictory($lastEmptyCell);
 
                 if (victory) {
                     setTimeout(function () {
                         alert(" You win ");
-                    } , 1200);                  
+                        
+                    }, 1200);
                     let winMessage = {
-                        reason: "GAMEOVER"
+                        reason: "GAMEOVER",
+                        player_id: that.id,
+                        game_id: that.game_id
                     };
-                    wss.send(JSON.stringify(winMessage));
+                    that.wss.send(JSON.stringify(winMessage));
+                    setTimeout(function() {
+                        that.wss.close();
+                    } , 1000);
+
                 }
 
                 else if ($(".empty").length === 0) {
                     let drawMessage = {
-                        reason: "DRAW"
+                        reason: "DRAW",
+                        player_id: that.id,
+                        game_id: that.game_id
+
                     };
-                    wss.send(JSON.stringify(drawMessage));
+                    that.wss.send(JSON.stringify(drawMessage));
+                    setTimeout(function() {
+                        that.wss.close();
+                    } , 1000);
                 }
 
                 else {
+                    that.displayWaitingMove();
                     let row = $lastEmptyCell.data("row");
                     let column = $lastEmptyCell.data("col");
-
+                    console.log(that.id);
+                    
+                    let moveMessage = {
+                        reason : "Move",
+                        game_id: that.game_id,
+                        player_id: that.id,
+                        filled_cell : [row , column]
+                    }
+                    
+                    that.wss.send(JSON.stringify(moveMessage));
+                    
                 }
             }
-
-            else $("h4").text("Invalid move. Column alredy filled");
 
         });
 
@@ -137,12 +166,12 @@ class Connect4 {
         let row = coordinates[0],
             column = coordinates[1];
 
-        var cell = $(`.col[data-col=column][data-row=row]`);
+        var cell = $(`.col[data-col=${column}][data-row=${row}]`);
         cell.removeClass('empty')
             .addClass('enemy')
             .addClass('filled');
         this.myMove = true;
-    
+        this.displayWaitingMove();
     }
 
     checkVictory(cell) {
@@ -158,53 +187,53 @@ class Connect4 {
 
     }
 
-     
 
-    checkRight(row , column) {
-        if(column > 6) return 0;
-        if(!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
-        return 1 + this.checkRight(row , column + 1); 
+
+    checkRight(row, column) {
+        if (column > 6) return 0;
+        if (!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
+        return 1 + this.checkRight(row, column + 1);
     }
 
-    checkLeft(row , column) {
-        if(column < 0 ) return 0;
-        if(!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
-        return 1 + this.checkLeft(row , column-1); 
+    checkLeft(row, column) {
+        if (column < 0) return 0;
+        if (!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
+        return 1 + this.checkLeft(row, column - 1);
     }
 
-    checkUp(row , column) {
-        if( row > 5) return 0;
-        if(!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
-        return 1 + this.checkUp(row - 1 , column); 
+    checkUp(row, column) {
+        if (row > 5) return 0;
+        if (!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
+        return 1 + this.checkUp(row - 1, column);
     }
 
-    checkDown(row , column) {
-        if(row < 0) return 0;
-        if(!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
-        return 1 + this.checkDown(row + 1 , column); 
+    checkDown(row, column) {
+        if (row < 0) return 0;
+        if (!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
+        return 1 + this.checkDown(row + 1, column);
     }
 
-    checkDiagonalRightUp(row , column) {
-        if(row > 5 || column > 6) return 0;
-        if(!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
-        return 1 + this.checkDiagonalRightUp(row - 1 , column + 1); 
+    checkDiagonalRightUp(row, column) {
+        if (row > 5 || column > 6) return 0;
+        if (!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
+        return 1 + this.checkDiagonalRightUp(row - 1, column + 1);
     }
 
-    checkDiagonalLeftDown(row , column) {
-        if(row < 0 || column < 0) return 0;
-        if(!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
-        return 1 + this.checkDiagonalLeftDown(row + 1 , column - 1);
+    checkDiagonalLeftDown(row, column) {
+        if (row < 0 || column < 0) return 0;
+        if (!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
+        return 1 + this.checkDiagonalLeftDown(row + 1, column - 1);
     }
 
-    checkDiagonalRightDown(row , column) {
-        if(row > 5 || column > 6) return 0;
-        if(!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
+    checkDiagonalRightDown(row, column) {
+        if (row > 5 || column > 6) return 0;
+        if (!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
         return 1 + this.checkDiagonalRightDown(row + 1, column + 1);
     }
 
-    checkDiagonalLeftUp(row , column) {
-        if(row < 0 || column < 0) return 0;
-        if(!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
+    checkDiagonalLeftUp(row, column) {
+        if (row < 0 || column < 0) return 0;
+        if (!$(`div[data-row=${row}][data-col=${column}]`).hasClass("own")) return 0;
         return 1 + this.checkDiagonalLeftUp(row - 1, column - 1);
     }
 

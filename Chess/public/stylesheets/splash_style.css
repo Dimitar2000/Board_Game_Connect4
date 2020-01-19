@@ -10,45 +10,52 @@ html {
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
 	overflow: hidden;
+	
 }
 
-@-webkit-keyframes comeFromLeft {
-	
+main , footer {
+	animation-name: invisibility;
+	animation-duration: 2.50s;
+}
+
+@keyframes invisibility {
 	from {
-		position: relative;
-		right: 2000px;
-		visibility: hidden;
 		opacity: 0;
-		
+	}
+
+	70% {
+		opacity: 0;
 	}
 	to {
-		position: relative;
-		right: 0px;
-		visibility: visible;
 		opacity: 1;
 	}
 }
 
-@keyframes comeFromRight {
-	from {
+@keyframes moveUp {
+	0% {
 		position: relative;
-		left: 2000px;
+		top: 15em;
 	}
 
-	to {
+	70% {
 		position: relative;
-		left: 0px;
+		top: 15em;
+	}
+
+	100% {
+		position: relative;
+		top:  0em;
 	}
 }
+
 
 header {
 	display: inline-flex;
 	width: 100%;
 	height: 25%;
-	-webkit-animation: blink ease-out 1.8s infinite;
-	animation-name: comeFromLeft;
-	animation-iteration-count: infinite;
-	animation-duration: 2s;
+	animation-name: moveUp;
+	animation-iteration-count: 1;
+	animation-duration: 2.50s;
 }
 
 
@@ -68,23 +75,23 @@ main {
 	margin-top: 2%;
 	height: 20%;
 	text-align: center;
-	-webkit-animation: blink ease-out 1.8s infinite;
-	animation-name: comeFromRight;
-	animation-duration: 2s;
-	animation-delay: 0;
 }	
 
 main button {
 	border-radius: 20px;
 	height: 70%;
-	width: 40%;
+	width: 20%;
 	font-size: 195%;
+	transition: width 1s;
+	transition-timing-function:  linear;
 }
 
-main button:hover {
+main button.transit:hover {
+	width: 40%;
 	color: brown;
-	background-color: beige;
-	cursor: pointer; 
+	background-color: ;
+	cursor: pointer;
+	
 }
 
 footer {
@@ -94,10 +101,6 @@ footer {
 	border-bottom: 2px black;
 	border-top-style: dashed;
 	border-bottom-style: dashed;
-	-webkit-animation: blink ease-out 1.8s infinite;
-	animation-name: comeFromLeft;
-	animation-iteration-count: 1;
-	animation-duration: 2s;
 }
 
 footer div.Statistics {
@@ -142,7 +145,7 @@ div.info {
 }
 
 strong {
-	color: red;
+	color: yellow;
 }
 
 

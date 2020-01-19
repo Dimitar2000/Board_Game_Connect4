@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
     "express-generator": "^4.16.1",
     "ws": "^7.2.1"
   },

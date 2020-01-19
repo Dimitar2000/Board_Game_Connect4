@@ -1,10 +1,33 @@
-body {
+
+html , body {
   text-align: center;
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  padding: 10px solid grey;
+  background-color: bisque;
+}
+
+.Timer {
+  margin: 10px;
+  width: 100px;
+  height: 50px;
+  border: 3px dashed blue;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  text-align: center;
+  padding-top: 10px;
+  font-size: 200%;
 }
 
 #connect4 {
-  background-color: yellow;
+  background-color: cadetblue;
   display: inline-block;
+}
+
+#Messages {
+    height: 10%;
 }
 
 .col {
