@@ -1,1 +1,5 @@
+# Exclude Node.js packages
+node_modules/
 
+# Exclude Visual Studio Code files
+.vs/
