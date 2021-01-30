@@ -74,7 +74,6 @@ main {
 	height: 20%;
 	text-align: center;
 }	
-
 main button {
 	border-radius: 20px;
 	height: 70%;
@@ -87,9 +86,16 @@ main button {
 main button.transit:hover {
 	width: 40%;
 	color: brown;
-	background-color: ;
 	cursor: pointer;
 	
+}
+
+main button.transit:active {
+	background-color: aqua;
+}
+
+p.Stats_Header ::after {
+	content: "--";
 }
 
 footer {
@@ -143,7 +149,23 @@ div.info {
 }
 
 strong {
-	color: rgb(129, 118, 21);
+	color: teal;
+}
+
+span {
+	color: teal;
+}
+span::before {
+	content: "-";
+}
+span::after {
+	content: ":";
+}
+
+strong.border {
+	border: 2px solid crimson;
+	border-radius: 20px;
+	background-color: aliceblue;
 }
 
 

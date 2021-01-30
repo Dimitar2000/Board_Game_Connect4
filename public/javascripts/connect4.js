@@ -108,8 +108,9 @@ class Connect4 {
 
                 if (victory) {
                     setTimeout(function () {
-                        alert(" You win ");
-                        
+                        document.querySelector("audio#winner").play().then((result) => {
+                            alert("You win");
+                        });
                     }, 1200);
                     let winMessage = {
                         reason: "GAMEOVER",

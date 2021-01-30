@@ -1,7 +1,7 @@
 var main = function() {
 
     var connected = false;
-    var url = "http://192.168.1.22:8000/game";
+    var url = "http://localhost:8000/game";
     var playerName;
 
     var stats = document.querySelectorAll("li p");     

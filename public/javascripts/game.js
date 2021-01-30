@@ -1,13 +1,21 @@
 
 var main = function () {
 
+    $.ajax({
+        type: "GET",
+        url: "/countMe",
+        success: function (response) {
+            $("p.Sessions").text(response);
+        }
+    });
 
     /*     -------------------------------------------------------------   */
     /*       Create a game object and pass him the WebSocket instance      */
     const connect4 = new Connect4('#connect4');
-    var wss = new WebSocket("ws://192.168.1.22:8000/");
+    var wss = new WebSocket("ws://localhost:8000/");
     connect4.addSocket(wss);
     /*     -------------------------------------------------------------   */
+    var counting;
 
     wss.onopen = function (ws, event) {
 
@@ -38,6 +46,10 @@ var main = function () {
 
     });
 
+    wss.onclose = function() {
+        clearInterval(counting);
+    };
+
     function gameInitialization(message) {
 
         connect4.id = message.my_id;
@@ -52,13 +64,12 @@ var main = function () {
 
     // Inform the player that he has lost the game and close the WebSocket
     function Game_Over() {
+        
         wss.close();
         document.querySelector("audio#loser").play().then((result) => {
-            document.querySelector("audio#loser").play();
-        }).catch((err) => {
-
-        });;
-        alert("You lose. Very sorry.");
+            alert("You lose. Very sorry.");
+        })
+        
     };
 
     // Redirect to the makeMove() function of the connect4 that will fill the enemy's cell
@@ -68,6 +79,7 @@ var main = function () {
 
     // Inform the player that it's a draw and close the WebSocket
     function draw() {
+        
         alert("Its a draw");
         wss.close();
     }
@@ -75,10 +87,13 @@ var main = function () {
     function startCount() {
         var timer = $("number");
         timer.text(0);
-        setInterval(function () {
+        counting = setInterval(function () {
+            
             timer.text((Number.parseFloat(timer.text()) + 0.1).toFixed(2));
         }, 100);
+        
     }
+     
 
 }
 
