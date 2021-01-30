@@ -5,6 +5,8 @@ var app = express();
 var objects = require("./objects");
 var fs = require("fs");
 var ejs = require("ejs");
+var cookies = require("cookie-parser");
+var sessions = require("express-session");
 
 var port = process.argv[2];
 var games = new objects.GameMap();
@@ -38,14 +40,25 @@ app.get("/game", function (request, response) {
 
     console.log("[LOG]: Request for game.html");
     gameNames.push(request.headers.cookie);
-    if(!waitingResponse) { waitingResponse = response;}
-    else  {
-    waitingResponse.sendFile("/game.html", { root: "./public" });
     response.sendFile("/game.html", { root: "./public" });
-    waitingResponse = null;
-    }
-
+    
 });
+
+app.get("/countMe",function(req , res) {
+    console.log("[LOG]: Request for counting");
+    
+    var session = req.session;
+    if(session.views) {
+        session.views++;
+        res.send("You have been here " + session.views + " times (last visit: " + session.lastVisit + ")");
+        session.lastVisit = new Date().toLocaleDateString();
+    }
+    else {
+        session.views = 1;
+        session.lastVisit = new Date().toLocaleDateString();
+        res.send("This is your first visit");
+    }
+})
 
 const server = http.createServer(app);
 const wss = new ws.Server({ server });
@@ -78,11 +91,13 @@ wss.on("connection", function (socket, request) {
             }
 
             case "GAMEOVER": {
+                if(message.player_id % 2 == 0) statistics.Times_The_First_Has_Won++;
                 sendGameEndingMessage("GAMEOVER", message.game_id , message.player_id);
                 break;
             }
 
             case "DRAW": {
+                if(message.player_id)
                 sendGameEndingMessage("DRAW", message.game_id , message.player_id);
                 break;
             }
@@ -101,7 +116,6 @@ server.listen(port, function (socket) {
 
 function newPlayer(socket, this_Is_The_First_Player) {
 
-    console.log(this_Is_The_First_Player);
     if (this_Is_The_First_Player) {
         games.addPlayer1(socket);
         console.log("First Player registered : ");
@@ -160,6 +174,7 @@ function sendGameEndingMessage(reason, gameID ,  playerID) {
 
 
 process.on("SIGINT" , function() {
+    statistics.currentGames = 0;
     fs.writeFileSync("statistics.json" , JSON.stringify(statistics));
     console.log("Writing completed");
     process.exit();
